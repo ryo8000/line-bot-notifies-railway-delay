@@ -1,0 +1,76 @@
+{
+  "name": "Python 3",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      // Update 'VARIANT' to pick a Python version: 3, 3.6, 3.7, 3.8, 3.9
+      "VARIANT": "3.8",
+      // Options
+      "INSTALL_NODE": "true",
+      "NODE_VERSION": "lts/*",
+    }
+  },
+  // コンテナの環境変数
+  "containerEnv": {
+    // __pycache__ディレクトリを作成しない
+    "PYTHONDONTWRITEBYTECODE": "1",
+  },
+  // コンテナのsettings.json値
+  "settings": {
+    "autoDocstring.docstringFormat": "google",
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "python.formatting.provider": "autopep8",
+    "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+    "python.formatting.autopep8Args": [
+      "--aggressive",
+      "--aggressive",
+    ],
+    // "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+    // "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+    "python.linting.enabled": true,
+    // "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+    "python.linting.flake8Args": [
+      "--max-line-length=150",
+      "--max-complexity=20"
+    ],
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+    "python.linting.mypyArgs": [
+      "--cache-dir=/dev/null"
+    ],
+    // "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+    // "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+    "python.linting.pylintEnabled": false,
+    "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+    "python.pythonPath": "/usr/local/bin/python",
+    "python.testing.autoTestDiscoverOnSaveEnabled": false,
+    "terminal.integrated.shell.linux": "/bin/bash",
+  },
+  // 拡張機能群
+  "extensions": [
+    "coenraads.bracket-pair-colorizer-2", // Bracket Pair Colorizer 2
+    "streetsidesoftware.code-spell-checker", // Code Spell Checker
+    "saikou9901.evilinspector", // EvilInspector
+    "pkief.material-icon-theme", // Material Icon Theme
+    "ms-python.python", // Python
+    "njpwerner.autodocstring", // Python Docstring Generator
+    "gruntfuggly.todo-tree", // Todo Tree
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "pip3 install --user -r requirements.txt",
+  // "postCreateCommand": "sls config credentials --provider aws --key ${AWS_ACCESS_KEY_ID} --secret ${AWS_SECRET_ACCESS_KEY}",
+
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode"
+}

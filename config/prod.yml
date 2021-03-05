@@ -1,0 +1,11 @@
+stageName: ""
+memorySize: 128
+timeout: 10
+environment:
+  AWS_CONNECT_TIMEOUT: 3
+  AWS_READ_TIMEOUT: 3
+  AWS_MAX_ATTEMPTS: 2
+  AWS_REGION_NAME: ap-northeast-1
+  AWS_USERS_TABLE: linebot_users
+  LINE_CHANNEL_ACCESS_TOKEN: ""
+  LINE_CHANNEL_SECRET: ""

@@ -1,0 +1,129 @@
+# サービス定義
+service: linebot
+
+provider:
+  name: aws
+  stage: ${opt:stage}
+  region: ${opt:region, self:custom.defaultRegion}
+  # CloudFormationのスタック名
+  stackName: ${self:service}${self:custom.config.${self:provider.stage}.stageName}
+  # S3デプロイ先の定義
+  deploymentBucket:
+  # Lambdaの共通設定
+  runtime: python3.8
+  memorySize: ${self:custom.config.${self:provider.stage}.memorySize}
+  timeout: ${self:custom.config.${self:provider.stage}.timeout}
+  role: lineBotRole
+  environment: ${self:custom.config.${self:provider.stage}.environment}
+
+# プラグイン群
+plugins:
+  - serverless-prune-plugin
+
+custom:
+  defaultRegion: ap-northeast-1
+  config:
+    dev: ${file(../config/dev.yml)}
+    prod: ${file(../config/prod.yml)}
+  # Lambdaレイヤー定義
+  layers:
+    - { Ref: LINEBotSDKLambdaLayer }
+  # serverless-prune-plugin設定
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 3
+
+# デプロイ対象ファイル定義
+package:
+  exclude:
+    - node_modules/**
+    - package-lock.json
+    - package.json
+
+# Lambda関数群
+functions:
+  reply:
+    handler: functions/reply.main
+    name: ${self:service}-reply${self:custom.config.${self:provider.stage}.stageName}
+    description: LINE Bot応答${self:custom.config.${self:provider.stage}.stageName}
+    layers: ${self:custom.layers}
+    events:
+      - http:
+          path: ${self:service}
+          method: post
+  notification:
+    handler: functions/notification.main
+    name: ${self:service}-notification${self:custom.config.${self:provider.stage}.stageName}
+    description: LINE Bot通知${self:custom.config.${self:provider.stage}.stageName}
+    layers: ${self:custom.layers}
+    events:
+      # 日本時間9時, 17-18時, 7-8時に15分毎
+      - eventBridge:
+        schedule: cron(0/15 0,8-9,22-23 ? * MON-FRI *)
+
+# Lambdaレイヤー群
+layers:
+  LINEBotSDK:
+    path: ../layers/line-bot-sdk
+    name: ${self:service}
+    description: for LINE Bot
+    compatibleRuntimes:
+      - python3.8
+
+# リソース群
+resources:
+  Resources:
+    UsersDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}_users${self:custom.config.${self:provider.stage}.stageName}
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    lineBotRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        RoleName: LineBotRole${self:custom.config.${self:provider.stage}.stageName}
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: lineBotPolicy${self:custom.config.${self:provider.stage}.stageName}
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogStream
+                    - logs:CreateLogGroup
+                  Resource:
+                    - arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/${self:service}*:*
+                - Effect: Allow
+                  Action:
+                    - logs:PutLogEvents
+                  Resource:
+                    - arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/${self:service}*:*:*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeTable
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:GetItem
+                    - dynamodb:PutItem
+                    - dynamodb:UpdateItem
+                    - dynamodb:DeleteItem
+                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}*
+        Description: only for LINE Bot ${self:provider.stage}
