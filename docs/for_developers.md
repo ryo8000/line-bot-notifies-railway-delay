@@ -14,6 +14,7 @@
 # Lambdaレイヤーを用意
 pip3 install -r requirements.txt -t ./layers/line-bot-sdk/python
 # Serverless Frameworkのプラグインを用意
+cd app/
 npm install
 ```
 
