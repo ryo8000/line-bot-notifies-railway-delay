@@ -58,14 +58,11 @@
     "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
     "python.pythonPath": "/usr/local/bin/python",
     "python.testing.autoTestDiscoverOnSaveEnabled": false,
-    "terminal.integrated.shell.linux": "/bin/bash",
   },
   // 拡張機能群
   "extensions": [
-    "coenraads.bracket-pair-colorizer-2", // Bracket Pair Colorizer 2
     "streetsidesoftware.code-spell-checker", // Code Spell Checker
     "saikou9901.evilinspector", // EvilInspector
-    "pkief.material-icon-theme", // Material Icon Theme
     "ms-python.python", // Python
     "njpwerner.autodocstring", // Python Docstring Generator
     "gruntfuggly.todo-tree", // Todo Tree
