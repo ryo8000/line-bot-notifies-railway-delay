@@ -18,12 +18,16 @@
   },
   // コンテナのsettings.json値
   "settings": {
-    "editor.formatOnType": true,
-    "editor.formatOnPaste": true,
-    "editor.formatOnSave": true,
     "files.eol": "\n",
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "[python]": {
+      "editor.formatOnType": true,
+      "editor.formatOnPaste": true,
+      "editor.formatOnSave": true,
+      "editor.tabSize": 4,
+    },
     // Python Docstring Generator コードスタイル
     "autoDocstring.docstringFormat": "google",
     // コード整形ツール定義
