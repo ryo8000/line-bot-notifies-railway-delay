@@ -1,6 +1,7 @@
 """DynamoDB用エンティティ基底モジュール"""
 
 import json
+from decimal import Decimal
 
 
 class Base():
@@ -14,7 +15,11 @@ class Base():
 
     def to_json_string(self) -> str:
         """JSON文字列に変換"""
-        return json.dumps(self.to_dict(), ensure_ascii=False, sort_keys=True)
+        return json.dumps(
+            self.to_dict(),
+            ensure_ascii=False,
+            sort_keys=True,
+            default=self._convert_value)
 
     def to_dict(self) -> dict:
         """dict型に変換"""
@@ -33,3 +38,9 @@ class Base():
                 data[key] = value
 
         return data
+
+    def _convert_value(self, value):
+        """json.dumps()で処理できないデータ型の変換処理"""
+        if isinstance(value, Decimal):
+            return float(value) if value % 1 > 0 else int(value)
+        raise TypeError(f"適切な型のデータに変換できません。 値: {repr(value)}")
