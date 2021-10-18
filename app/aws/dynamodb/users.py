@@ -1,5 +1,6 @@
 """usersエンティティ用モジュール"""
 
+from dataclasses import dataclass
 from decimal import Decimal
 
 from aws.dynamodb.base import Base
@@ -19,21 +20,18 @@ class User(Base):
         self.user_id = user_id
         self.created_time = created_time
         self.updated_time = updated_time
-        self.delay_info_messages = DelayInfoMessages(
-            delay_info_messages['west_jr'],
-            delay_info_messages['hankyu'],
-            delay_info_messages['hanshin'],
-            delay_info_messages['all']) if delay_info_messages else None
+        self.delay_info_messages = DelayInfoMessages.from_dict(
+            delay_info_messages) if delay_info_messages else None
 
 
+@dataclass
 class DelayInfoMessages(Base):
     """鉄道遅延情報メッセージ群クラス"""
 
-    def __init__(self, west_jr: str, hankyu: str, hanshin: str, all: str):
-        self.west_jr = west_jr
-        self.hankyu = hankyu
-        self.hanshin = hanshin
-        self.all = all
+    west_jr: str
+    hankyu: str
+    hanshin: str
+    all: str
 
     def extract_message(self, company_type: int) -> str:
         """鉄道遅延情報メッセージ群から対象の鉄道遅延情報メッセージを抽出する
@@ -45,7 +43,7 @@ class DelayInfoMessages(Base):
             DynamoDBError: 運営会社種類が正しく設定されていない
 
         Returns:
-            str: 対象の鉄道遅延情報メッセージ
+            対象の鉄道遅延情報メッセージ
         """
         if company_type == WEST_JR:
             extracted_message = self.west_jr
@@ -58,3 +56,18 @@ class DelayInfoMessages(Base):
         else:
             raise DynamoDBError(f"運営会社種類が正しく設定されていません。運営会社種類: {company_type}")
         return extracted_message
+
+    @classmethod
+    def from_dict(cls, delay_info_messages: dict):
+        """dict型のデータからDelayInfoMessagesインスタンスを生成する
+
+        Args:
+            delay_info_messages: dict型データ
+
+        Returns:
+            DelayInfoMessagesインスタンス
+        """
+        return cls(delay_info_messages["west_jr"],
+                   delay_info_messages["hankyu"],
+                   delay_info_messages["hanshin"],
+                   delay_info_messages["all"])
