@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import Optional
 
 from aws.dynamodb.base import Base
 from aws.exceptions import DynamoDBError
@@ -10,18 +11,6 @@ ALL = 0
 WEST_JR = 1
 HANKYU = 2
 HANSHIN = 3
-
-
-class User(Base):
-    """ユーザクラス"""
-
-    def __init__(self, user_id: str, created_time: Decimal,
-                 updated_time: Decimal, delay_info_messages: dict = None):
-        self.user_id = user_id
-        self.created_time = created_time
-        self.updated_time = updated_time
-        self.delay_info_messages = DelayInfoMessages.from_dict(
-            delay_info_messages) if delay_info_messages else None
 
 
 @dataclass
@@ -71,3 +60,31 @@ class DelayInfoMessages(Base):
                    delay_info_messages["hankyu"],
                    delay_info_messages["hanshin"],
                    delay_info_messages["all"])
+
+
+@dataclass
+class User(Base):
+    """ユーザクラス"""
+
+    user_id: str
+    created_time: Decimal
+    updated_time: Decimal
+    delay_info_messages: Optional[DelayInfoMessages]
+
+    @classmethod
+    def from_dict(cls, user: dict):
+        """dict型のデータからUserインスタンスを生成する
+
+        Args:
+            user: dict型データ
+
+        Returns:
+            Userインスタンス
+        """
+        delay_info_messages = user.get("delay_info_messages")
+        type_delay_info_messages = DelayInfoMessages.from_dict(
+            delay_info_messages) if delay_info_messages else None
+        return cls(user["user_id"],
+                   user.get("created_time"),
+                   user.get("updated_time"),
+                   type_delay_info_messages)

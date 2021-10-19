@@ -25,7 +25,7 @@ def put_user(user_id: str) -> dict:
         dict: ユーザ情報の登録結果
     """
     timestamp_now = Decimal(int(datetime.utcnow().timestamp()))
-    user = User(user_id, timestamp_now, timestamp_now)
+    user = User(user_id, timestamp_now, timestamp_now, None)
     try:
         response = users_table.put_item(
             Item=utils.replace_data(user.to_dict()))
@@ -121,8 +121,7 @@ def get_user(user_id: str) -> Optional[User]:
     except Exception as e:
         raise e
     item = response.get('Item')
-    return User(item['user_id'], item.get('created_time'), item.get(
-        'updated_time'), item.get('delay_info_messages')) if item else None
+    return User.from_dict(item) if item else None
 
 
 def get_railway() -> User:
@@ -157,10 +156,4 @@ def scan_exclude_railway() -> List[User]:
         response = users_table.scan(**scan_kwargs)
     except Exception as e:
         raise e
-    users = [
-        User(
-            item['user_id'],
-            item.get('created_time'),
-            item.get('updated_time'),
-            item.get('delay_info_messages')) for item in response['Items']]
-    return users
+    return [User.from_dict(item) for item in response["Items"]]
