@@ -56,8 +56,8 @@ def handle_follow(line_event: FollowEvent) -> None:
     Args:
         line_event: LINEイベント(フォロー)
     """
+    logger.info("LINEイベント(フォロー): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(フォロー): {}", user_id, line_event)
 
     if not put_user_info(user_id):
         line_bot_api.reply_text_message(
@@ -76,8 +76,8 @@ def handle_unfollow(line_event: UnfollowEvent) -> None:
     Args:
         line_event: LINEイベント(フォロー解除)
     """
+    logger.info("LINEイベント(フォロー解除): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(フォロー解除): {}", user_id, line_event)
 
     delete_user_info(user_id)
 
@@ -89,8 +89,8 @@ def handle_text_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(テキストメッセージ)
     """
+    logger.info("LINEイベント(テキストメッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(テキストメッセージ): {}", user_id, line_event)
 
     text = create_reply_text(line_event.message.text)
     line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
@@ -103,8 +103,8 @@ def handle_stamp_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(スタンプメッセージ)
     """
+    logger.info("LINEイベント(スタンプメッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(スタンプメッセージ): {}", user_id, line_event)
 
     package_id, sticker_id = create_random_stamp_ids(random.randint(1, 3))
     line_bot_api.reply_stamp_message(
@@ -118,8 +118,8 @@ def handle_audio_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(音声メッセージ)
     """
+    logger.info("LINEイベント(音声メッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(音声メッセージ): {}", user_id, line_event)
 
     text = create_fixed_text(line_event.message.type)
     line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
@@ -132,8 +132,8 @@ def handle_image_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(画像メッセージ)
     """
+    logger.info("LINEイベント(画像メッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(画像メッセージ): {}", user_id, line_event)
 
     text = create_fixed_text(line_event.message.type)
     line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
@@ -146,8 +146,8 @@ def handle_location_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(位置情報メッセージ)
     """
+    logger.info("LINEイベント(位置情報メッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(位置情報メッセージ): {}", user_id, line_event)
 
     text = create_fixed_text(line_event.message.type)
     line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
@@ -160,8 +160,8 @@ def handle_video_message(line_event: MessageEvent) -> None:
     Args:
         line_event: LINEイベント(動画メッセージ)
     """
+    logger.info("LINEイベント(動画メッセージ): {}", line_event)
     user_id = line_event.source.user_id
-    logger.info("[{}] LINEイベント(動画メッセージ): {}", user_id, line_event)
 
     text = create_fixed_text(line_event.message.type)
     line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
@@ -179,9 +179,11 @@ def put_user_info(user_id: str) -> dict:
     try:
         response = users_table.put_user(user_id)
     except Exception:
-        logger.opt(exception=True).warning("[{}] ユーザ情報の登録に失敗しました。", user_id)
+        logger.opt(exception=True).warning(
+            "ユーザ情報の登録に失敗しました。 ユーザID: {}",
+            user_id)
         return {}
-    logger.info("[{}] ユーザ情報の登録に成功しました。", user_id)
+    logger.info("ユーザ情報の登録に成功しました。 ユーザID: {}", user_id)
     return response
 
 
@@ -197,9 +199,11 @@ def delete_user_info(user_id: str) -> dict:
     try:
         response = users_table.delete_user(user_id)
     except Exception:
-        logger.opt(exception=True).warning("[{}] ユーザ情報の削除に失敗しました。", user_id)
+        logger.opt(exception=True).warning(
+            "ユーザ情報の削除に失敗しました。 ユーザID: {}",
+            user_id)
         return {}
-    logger.info("[{}] ユーザ情報の削除に成功しました。", user_id)
+    logger.info("ユーザ情報の削除に成功しました。 ユーザID: {}", user_id)
     return response
 
 

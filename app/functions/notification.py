@@ -74,4 +74,4 @@ def notify_all_users_of_railway_delay_info(
             line_bot_api.push_text_message(user_id, railway_delay_info_message)
         except Exception:
             logger.opt(exception=True).warning(
-                "[{}] 鉄道遅延情報の通知に失敗しましたが処理を続行します。", user_id)
+                "鉄道遅延情報の通知に失敗しましたが処理を続行します。 ユーザID: {}", user_id)
