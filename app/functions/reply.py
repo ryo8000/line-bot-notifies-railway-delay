@@ -15,7 +15,6 @@ from loguru import logger
 import railway
 from aws.dynamodb import users, users_table
 from functions import texts
-from functions.exceptions import TextError
 from line import line_bot_api
 
 # 定数群
@@ -121,8 +120,8 @@ def handle_audio_message(line_event: MessageEvent) -> None:
     logger.info("LINEイベント(音声メッセージ): {}", line_event)
     user_id = line_event.source.user_id
 
-    text = create_fixed_text(line_event.message.type)
-    line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
+    line_bot_api.reply_text_message(
+        line_event.reply_token, user_id, texts.AUDIO)
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -135,8 +134,8 @@ def handle_image_message(line_event: MessageEvent) -> None:
     logger.info("LINEイベント(画像メッセージ): {}", line_event)
     user_id = line_event.source.user_id
 
-    text = create_fixed_text(line_event.message.type)
-    line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
+    line_bot_api.reply_text_message(
+        line_event.reply_token, user_id, texts.IMAGE)
 
 
 @handler.add(MessageEvent, message=LocationMessage)
@@ -149,8 +148,8 @@ def handle_location_message(line_event: MessageEvent) -> None:
     logger.info("LINEイベント(位置情報メッセージ): {}", line_event)
     user_id = line_event.source.user_id
 
-    text = create_fixed_text(line_event.message.type)
-    line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
+    line_bot_api.reply_text_message(
+        line_event.reply_token, user_id, texts.LOCATION)
 
 
 @handler.add(MessageEvent, message=VideoMessage)
@@ -163,8 +162,8 @@ def handle_video_message(line_event: MessageEvent) -> None:
     logger.info("LINEイベント(動画メッセージ): {}", line_event)
     user_id = line_event.source.user_id
 
-    text = create_fixed_text(line_event.message.type)
-    line_bot_api.reply_text_message(line_event.reply_token, user_id, text)
+    line_bot_api.reply_text_message(
+        line_event.reply_token, user_id, texts.VIDEO)
 
 
 def put_user_info(user_id: str) -> dict:
@@ -261,32 +260,6 @@ def get_railway_delay_info(company_type: int) -> str:
     else:
         delay_info_message = railway.request_delay_info_message(company_type)
     return delay_info_message
-
-
-def create_fixed_text(line_event_type: str) -> str:
-    """音声・画像・位置情報・動画メッセージに対する固定テキストを作成
-
-    Args:
-        line_event_type: LINEイベント種別
-
-    Raises:
-        TextError: LINEイベント種別が正しく設定されていない
-
-    Returns:
-        str: 固定テキスト
-    """
-    if line_event_type == "audio":
-        text = texts.AUDIO
-    elif line_event_type == "image":
-        text = texts.IMAGE
-    elif line_event_type == "location":
-        text = texts.LOCATION
-    elif line_event_type == "video":
-        text = texts.VIDEO
-    else:
-        raise TextError(
-            f"LINEイベント種別が正しく設定されていません。LINEイベント種別: {line_event_type}")
-    return text
 
 
 def create_random_stamp_ids(rnd: int) -> tuple:
