@@ -7,7 +7,7 @@ from aws.dynamodb import users, users_table
 from line import line_bot_api
 
 
-def main(event: dict, context: dict) -> None:
+def main(event: dict, context: object) -> None:
     """LINE通知処理
 
     Args:

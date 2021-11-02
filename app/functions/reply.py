@@ -26,7 +26,7 @@ FOLLOW_STAMP_STICKER_ID = 52002734
 handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 
 
-def main(event: dict, context: dict):
+def main(event: dict, context: object):
     """LINEイベントに対する応答処理
 
     Args:
