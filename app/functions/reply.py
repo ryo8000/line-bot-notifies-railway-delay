@@ -78,7 +78,15 @@ def handle_unfollow(line_event: UnfollowEvent) -> None:
     logger.info("LINEイベント(フォロー解除): {}", line_event)
     user_id = line_event.source.user_id
 
-    delete_user_info(user_id)
+    try:
+        # ユーザ情報を削除する
+        users_table.delete_user(user_id)
+    except Exception:
+        logger.opt(exception=True).warning(
+            "ユーザ情報の削除に失敗しました。 ユーザID: {}",
+            user_id)
+        return
+    logger.info("ユーザ情報の削除に成功しました。 ユーザID: {}", user_id)
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -183,26 +191,6 @@ def put_user_info(user_id: str) -> dict:
             user_id)
         return {}
     logger.info("ユーザ情報の登録に成功しました。 ユーザID: {}", user_id)
-    return response
-
-
-def delete_user_info(user_id: str) -> dict:
-    """ユーザ情報を削除する
-
-    Args:
-        user_id: ユーザID
-
-    Returns:
-        dict: ユーザ情報の削除結果
-    """
-    try:
-        response = users_table.delete_user(user_id)
-    except Exception:
-        logger.opt(exception=True).warning(
-            "ユーザ情報の削除に失敗しました。 ユーザID: {}",
-            user_id)
-        return {}
-    logger.info("ユーザ情報の削除に成功しました。 ユーザID: {}", user_id)
     return response
 
 
