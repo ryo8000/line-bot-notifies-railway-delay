@@ -58,10 +58,17 @@ def handle_follow(line_event: FollowEvent) -> None:
     logger.info("LINEイベント(フォロー): {}", line_event)
     user_id = line_event.source.user_id
 
-    if not put_user_info(user_id):
+    try:
+        # ユーザ情報を登録する
+        users_table.put_user(user_id)
+    except Exception:
+        logger.opt(exception=True).warning(
+            "ユーザ情報の登録に失敗しました。 ユーザID: {}",
+            user_id)
         line_bot_api.reply_text_message(
             line_event.reply_token, user_id, texts.FAIL_REGISTER_USER_INFO)
         return
+    logger.info("ユーザ情報の登録に成功しました。 ユーザID: {}", user_id)
     line_bot_api.reply_stamp_message(
         line_event.reply_token, user_id, FOLLOW_STAMP_PACKAGE_ID,
         FOLLOW_STAMP_STICKER_ID
@@ -172,26 +179,6 @@ def handle_video_message(line_event: MessageEvent) -> None:
 
     line_bot_api.reply_text_message(
         line_event.reply_token, user_id, texts.VIDEO)
-
-
-def put_user_info(user_id: str) -> dict:
-    """ユーザ情報を登録する
-
-    Args:
-        user_id: ユーザID
-
-    Returns:
-        dict: ユーザ情報の登録結果
-    """
-    try:
-        response = users_table.put_user(user_id)
-    except Exception:
-        logger.opt(exception=True).warning(
-            "ユーザ情報の登録に失敗しました。 ユーザID: {}",
-            user_id)
-        return {}
-    logger.info("ユーザ情報の登録に成功しました。 ユーザID: {}", user_id)
-    return response
 
 
 def create_reply_text(text: str) -> str:
