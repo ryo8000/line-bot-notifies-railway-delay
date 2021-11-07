@@ -44,7 +44,7 @@ def reply_stamp_message(reply_token: str, user_id: str,
         error: スタンプメッセージの応答に失敗
     """
     logger.info(
-        "ユーザID: {}, 応答スタンプメッセージ: [パッケージID: {} スタンプID: {}]",
+        "ユーザID: {}, 応答スタンプメッセージ: [パッケージID: {}, スタンプID: {}]",
         user_id, package_id, sticker_id
     )
     try:

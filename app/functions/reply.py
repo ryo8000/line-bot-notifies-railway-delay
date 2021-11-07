@@ -61,18 +61,19 @@ def handle_follow(line_event: FollowEvent) -> None:
     try:
         # ユーザ情報を登録する
         users_table.put_user(user_id)
+
+        line_bot_api.reply_stamp_message(
+            line_event.reply_token, user_id, FOLLOW_STAMP_PACKAGE_ID,
+            FOLLOW_STAMP_STICKER_ID
+        )
     except Exception:
-        logger.opt(exception=True).warning(
-            "ユーザ情報の登録に失敗しました。 ユーザID: {}",
+        logger.exception(
+            "LINEイベント(フォロー)の処理に失敗しました。 ユーザID: {}",
             user_id)
         line_bot_api.reply_text_message(
             line_event.reply_token, user_id, texts.FAIL_REGISTER_USER_INFO)
         return
-    logger.info("ユーザ情報の登録に成功しました。 ユーザID: {}", user_id)
-    line_bot_api.reply_stamp_message(
-        line_event.reply_token, user_id, FOLLOW_STAMP_PACKAGE_ID,
-        FOLLOW_STAMP_STICKER_ID
-    )
+    logger.success("LINEイベント(フォロー)の処理に成功しました。 ユーザID: {}", user_id)
 
 
 @handler.add(UnfollowEvent)
@@ -89,11 +90,11 @@ def handle_unfollow(line_event: UnfollowEvent) -> None:
         # ユーザ情報を削除する
         users_table.delete_user(user_id)
     except Exception:
-        logger.opt(exception=True).warning(
-            "ユーザ情報の削除に失敗しました。 ユーザID: {}",
+        logger.exception(
+            "LINEイベント(フォロー解除)の処理に失敗しました。 ユーザID: {}",
             user_id)
         return
-    logger.info("ユーザ情報の削除に成功しました。 ユーザID: {}", user_id)
+    logger.success("LINEイベント(フォロー解除)の処理に成功しました。 ユーザID: {}", user_id)
 
 
 @handler.add(MessageEvent, message=TextMessage)
