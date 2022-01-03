@@ -14,7 +14,7 @@
 # Lambdaレイヤーを用意
 pip3 install -r requirements.txt -t ./layers/line-bot-sdk/python
 # Serverless Frameworkのプラグインを用意
-cd app/
+cd src/main/
 npm install
 ```
 
@@ -62,13 +62,13 @@ sls config credentials --provider aws --key {AWSアクセスキー} --secret {AW
 1. 以下のいずれかのコマンドを実行する。
 
 ```bash
-cd app/
+cd src/main/
 # 開発環境デプロイ
 npm run deploy-dev
 ```
 
 ```bash
-cd app/
+cd src/main/
 # 本番環境デプロイ
 npm run deploy-prod
 ```
@@ -77,7 +77,7 @@ npm run deploy-prod
 
 ### ディレクトリ構成
 
-- app/: AWS 上にデプロイするファイル一式と Serverless Framework 用 モジュール。
+- src/main/: AWS 上にデプロイするファイル一式と Serverless Framework 用 モジュール。
 - config/: デプロイ用ファイル一式。
 - layers/: Lambda レイヤー用。
 

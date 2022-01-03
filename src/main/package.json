@@ -1,0 +1,18 @@
+{
+  "name": "sls",
+  "version": "1.0.0",
+  "description": "Serverless Framework.(containing plugins)",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-dev": "sls deploy -v --stage dev --config ../../config/serverless.yml",
+    "remove-dev": "sls remove -v --stage dev --config ../../config/serverless.yml",
+    "deploy-prod": "sls deploy -v --stage prod --config ../../config/serverless.yml",
+    "remove-prod": "sls remove -v --stage prod --config ../../config/serverless.yml"
+  },
+  "devDependencies": {
+    "serverless-prune-plugin": "^1.4.3"
+  },
+  "dependencies": {}
+}

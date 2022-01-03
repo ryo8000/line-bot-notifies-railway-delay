@@ -23,8 +23,8 @@ plugins:
 custom:
   defaultRegion: ap-northeast-1
   config:
-    dev: ${file(../config/dev.yml)}
-    prod: ${file(../config/prod.yml)}
+    dev: ${file(../../config/dev.yml)}
+    prod: ${file(../../config/prod.yml)}
   # Lambdaレイヤー定義
   layers:
     - { Ref: LINEBotSDKLambdaLayer }
@@ -65,7 +65,7 @@ functions:
 # Lambdaレイヤー群
 layers:
   LINEBotSDK:
-    path: ../layers/line-bot-sdk
+    path: ../../layers/line-bot-sdk
     name: ${self:service}
     description: for LINE Bot
     compatibleRuntimes:
