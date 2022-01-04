@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
 
 from aws.dynamodb.base import Base
 from aws.exceptions import DynamoDBError
@@ -69,7 +68,6 @@ class User(Base):
     user_id: str
     created_time: Decimal
     updated_time: Decimal
-    delay_info_messages: Optional[DelayInfoMessages]
 
     @classmethod
     def from_dict(cls, user: dict):
@@ -81,10 +79,32 @@ class User(Base):
         Returns:
             Userインスタンス
         """
-        delay_info_messages = user.get("delay_info_messages")
+        return cls(user["user_id"],
+                   user["created_time"],
+                   user["updated_time"])
+
+
+@dataclass
+class Railway(Base):
+    """鉄道用ユーザクラス"""
+
+    user_id: str
+    updated_time: Decimal
+    delay_info_messages: DelayInfoMessages
+
+    @classmethod
+    def from_dict(cls, railway: dict):
+        """dict型のデータからRailwayインスタンスを生成する
+
+        Args:
+            railway: dict型データ
+
+        Returns:
+            Railwayインスタンス
+        """
+        delay_info_messages = railway.get("delay_info_messages")
         type_delay_info_messages = DelayInfoMessages.from_dict(
             delay_info_messages) if delay_info_messages else None
-        return cls(user["user_id"],
-                   user.get("created_time"),
-                   user.get("updated_time"),
+        return cls(railway["user_id"],
+                   railway["updated_time"],
                    type_delay_info_messages)

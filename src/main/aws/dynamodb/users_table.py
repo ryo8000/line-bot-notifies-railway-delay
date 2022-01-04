@@ -6,7 +6,7 @@ from decimal import Decimal
 from typing import List, Optional
 
 from aws.dynamodb import utils
-from aws.dynamodb.users import DelayInfoMessages, User
+from aws.dynamodb.users import DelayInfoMessages, User, Railway
 from aws.exceptions import DynamoDBError
 
 users_table = utils.db.Table(os.environ['AWS_USERS_TABLE'])
@@ -25,7 +25,7 @@ def put_user(user_id: str) -> dict:
         dict: ユーザ情報の登録結果
     """
     timestamp_now = Decimal(int(datetime.utcnow().timestamp()))
-    user = User(user_id, timestamp_now, timestamp_now, None)
+    user = User(user_id, timestamp_now, timestamp_now)
     try:
         response = users_table.put_item(
             Item=utils.replace_data(user.to_dict()))
@@ -124,19 +124,24 @@ def get_user(user_id: str) -> Optional[User]:
     return User.from_dict(item) if item else None
 
 
-def get_railway() -> User:
+def get_railway() -> Railway:
     """鉄道用ユーザ情報を取得する
 
     Raises:
         DynamoDBError: 鉄道用ユーザ情報が登録されていない
 
     Returns:
-        User: 鉄道用ユーザ情報
+        Railway: 鉄道用ユーザ情報
     """
-    railway_user = get_user("railway")
-    if railway_user is None:
+    key = {'user_id': 'railway'}
+    try:
+        response = users_table.get_item(Key=key)
+    except Exception as e:
+        raise e
+    item = response.get('Item')
+    if not item:
         raise DynamoDBError("鉄道用ユーザ情報が登録されていません。")
-    return railway_user
+    return Railway.from_dict(item)
 
 
 def scan_exclude_railway() -> List[User]:
