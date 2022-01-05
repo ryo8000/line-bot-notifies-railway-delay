@@ -230,7 +230,7 @@ def get_railway_delay_info(company_type: int) -> str:
     timestamp_now = int(datetime.utcnow().timestamp())
     # 過度なリクエストを避けるため、一定時間内であればDBに登録されている鉄道遅延情報を代用する
     if (railway_user.updated_time + TEN_MINUTES) > timestamp_now:
-        delay_info_message = railway_user.delay_info_messages.extract_message(
+        delay_info_message = railway_user.messages.extract_message(
             company_type)
         logger.info("DBに登録されている鉄道遅延情報を使用: {}", delay_info_message)
     else:

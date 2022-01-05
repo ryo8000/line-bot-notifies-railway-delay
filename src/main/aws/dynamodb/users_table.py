@@ -6,7 +6,7 @@ from decimal import Decimal
 from typing import List, Optional
 
 from aws.dynamodb import utils
-from aws.dynamodb.users import DelayInfoMessages, User, Railway
+from aws.dynamodb.users import Messages, User, Railway
 from aws.exceptions import DynamoDBError
 
 users_table = utils.db.Table(os.environ['AWS_USERS_TABLE'])
@@ -34,12 +34,12 @@ def put_user(user_id: str) -> dict:
     return response
 
 
-def update_user(user_id: str, delay_info_messages: DelayInfoMessages) -> dict:
+def update_user(user_id: str, messages: Messages) -> dict:
     """ユーザ情報を更新する
 
     Args:
         user_id: ユーザID
-        delay_info_messages: 鉄道遅延情報メッセージ群
+        messages: 鉄道遅延情報メッセージ群
 
     Raises:
         e: ユーザ情報の更新に失敗
@@ -48,13 +48,13 @@ def update_user(user_id: str, delay_info_messages: DelayInfoMessages) -> dict:
         dict: ユーザ情報の更新結果
     """
     key = {'user_id': user_id}
-    expression = "set #delay_info_messages=:delay_info_messages, #updated_time=:updated_time"
+    expression = "set #messages=:messages, #updated_time=:updated_time"
     expression_name = {
-        '#delay_info_messages': 'delay_info_messages',
+        '#messages': 'messages',
         '#updated_time': 'updated_time'
     }
     expression_value = {
-        ':delay_info_messages': delay_info_messages.to_dict(),
+        ':messages': messages.to_dict(),
         ':updated_time': int(datetime.utcnow().timestamp()),
     }
     return_value = "UPDATED_NEW"
@@ -71,16 +71,16 @@ def update_user(user_id: str, delay_info_messages: DelayInfoMessages) -> dict:
     return response
 
 
-def update_railway(delay_info_messages: DelayInfoMessages) -> dict:
+def update_railway(messages: Messages) -> dict:
     """鉄道用ユーザ情報を更新する
 
     Args:
-        delay_info_messages:  鉄道遅延情報メッセージ群
+        messages:  鉄道遅延情報メッセージ群
 
     Returns:
         dict: 鉄道用ユーザ情報の更新結果
     """
-    return update_user("railway", delay_info_messages)
+    return update_user("railway", messages)
 
 
 def delete_user(user_id: str) -> dict:

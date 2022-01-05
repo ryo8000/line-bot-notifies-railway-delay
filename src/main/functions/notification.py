@@ -16,7 +16,7 @@ def main(event: dict, context: object) -> None:
     """
     try:
         railway_user = users_table.get_railway()
-        db_railway_delay_info_message = railway_user.delay_info_messages.all
+        db_railway_delay_info_message = railway_user.messages.all
 
         latest_railway_delay_info_message = railway.request_delay_info_message(
             users.ALL)

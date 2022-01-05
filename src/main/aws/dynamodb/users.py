@@ -13,7 +13,7 @@ HANSHIN = 3
 
 
 @dataclass
-class DelayInfoMessages(Base):
+class Messages(Base):
     """鉄道遅延情報メッセージ群クラス"""
 
     west_jr: str
@@ -46,19 +46,19 @@ class DelayInfoMessages(Base):
         return extracted_message
 
     @classmethod
-    def from_dict(cls, delay_info_messages: dict):
-        """dict型のデータからDelayInfoMessagesインスタンスを生成する
+    def from_dict(cls, messages: dict):
+        """dict型のデータからMessagesインスタンスを生成する
 
         Args:
-            delay_info_messages: dict型データ
+            messages: dict型データ
 
         Returns:
-            DelayInfoMessagesインスタンス
+            Messagesインスタンス
         """
-        return cls(delay_info_messages["west_jr"],
-                   delay_info_messages["hankyu"],
-                   delay_info_messages["hanshin"],
-                   delay_info_messages["all"])
+        return cls(messages["west_jr"],
+                   messages["hankyu"],
+                   messages["hanshin"],
+                   messages["all"])
 
 
 @dataclass
@@ -90,7 +90,7 @@ class Railway(Base):
 
     user_id: str
     updated_time: Decimal
-    delay_info_messages: DelayInfoMessages
+    messages: Messages
 
     @classmethod
     def from_dict(cls, railway: dict):
@@ -102,9 +102,8 @@ class Railway(Base):
         Returns:
             Railwayインスタンス
         """
-        delay_info_messages = railway.get("delay_info_messages")
-        type_delay_info_messages = DelayInfoMessages.from_dict(
-            delay_info_messages) if delay_info_messages else None
+        messages = railway.get("messages")
+        type_messages = Messages.from_dict(messages) if messages else None
         return cls(railway["user_id"],
                    railway["updated_time"],
-                   type_delay_info_messages)
+                   type_messages)

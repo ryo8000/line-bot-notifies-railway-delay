@@ -6,7 +6,7 @@ import requests
 from loguru import logger
 
 from aws.dynamodb import users_table
-from aws.dynamodb.users import DelayInfoMessages
+from aws.dynamodb.users import Messages
 
 # 定数群
 DELAY_URL = "https://tetsudo.rti-giken.jp/free/delay.json"
@@ -30,18 +30,18 @@ def request_delay_info_message(company_type: int) -> str:
     logger.info("鉄道遅延情報メッセージを取得します。 運営会社種類: {}", company_type)
     try:
         delay_info_list = _request_delay_info_list()
-        delay_info_messages = _generate_delay_info_messages(delay_info_list)
+        messages = _generate_delay_info_messages(delay_info_list)
     except Exception as e:
         logger.error("鉄道遅延情報メッセージの取得に失敗しました。")
         raise e
-    logger.info("鉄道遅延情報メッセージの取得に成功しました。 鉄道遅延情報メッセージ: {}", delay_info_messages)
+    logger.info("鉄道遅延情報メッセージの取得に成功しました。 鉄道遅延情報メッセージ: {}", messages)
 
     try:
-        users_table.update_railway(delay_info_messages)
+        users_table.update_railway(messages)
     except Exception as e:
         logger.error("鉄道遅延情報メッセージの登録に失敗しました。")
         raise e
-    delay_info_message = delay_info_messages.extract_message(company_type)
+    delay_info_message = messages.extract_message(company_type)
     return delay_info_message
 
 
@@ -66,14 +66,14 @@ def _request_delay_info_list() -> list:
     return delay_info_list
 
 
-def _generate_delay_info_messages(delay_info_list: list) -> DelayInfoMessages:
+def _generate_delay_info_messages(delay_info_list: list) -> Messages:
     """鉄道遅延情報リストから運営会社毎の鉄道遅延情報メッセージを作成する
 
     Args:
         delay_info_list: 鉄道遅延情報リスト
 
     Returns:
-        DelayInfoMessages: 鉄道遅延情報メッセージ群
+        Messages: 鉄道遅延情報メッセージ群
     """
     west_jr_delay_lines = []
     hankyu_delay_lines = []
@@ -122,14 +122,14 @@ def _generate_delay_info_messages(delay_info_list: list) -> DelayInfoMessages:
         if hanshin_delay_lines:
             all_companies_delay_info_message += f"\n{HANSHIN_URL}"
 
-    delay_info_messages = DelayInfoMessages(
+    messages = Messages(
         west_jr_delay_info_message,
         hankyu_delay_info_message,
         hanshin_delay_info_message,
         all_companies_delay_info_message
     )
-    logger.info("鉄道遅延情報メッセージ群: {}", delay_info_messages)
-    return delay_info_messages
+    logger.info("鉄道遅延情報メッセージ群: {}", messages)
+    return messages
 
 
 def _is_match(delay_info: dict, company: str, line: str) -> bool:
