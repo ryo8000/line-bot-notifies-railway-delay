@@ -25,7 +25,7 @@ def request_delay_info_message(company_type: int) -> str:
         e: 鉄道遅延情報メッセージの取得／登録に失敗
 
     Returns:
-        str: 鉄道遅延情報メッセージ
+        鉄道遅延情報メッセージ
     """
     logger.info("鉄道遅延情報メッセージを取得します。 運営会社種類: {}", company_type)
     try:
@@ -52,7 +52,7 @@ def _request_delay_info_list() -> list:
         e: 鉄道遅延情報リストの取得に失敗
 
     Returns:
-        list: 鉄道遅延情報リスト
+        鉄道遅延情報リスト
     """
     try:
         delay_info_list = requests.get(DELAY_URL).json()
@@ -73,7 +73,7 @@ def _generate_delay_info_messages(delay_info_list: list) -> Messages:
         delay_info_list: 鉄道遅延情報リスト
 
     Returns:
-        Messages: 鉄道遅延情報メッセージ群
+        鉄道遅延情報メッセージ群
     """
     west_jr_delay_lines = []
     hankyu_delay_lines = []
@@ -144,7 +144,7 @@ def _is_match(delay_info: dict, company: str, line: str) -> bool:
         e: JSON内に処理対象のキーが存在しない
 
     Returns:
-        bool: 対象の鉄道の場合はTrue
+        対象の鉄道の場合はTrue
     """
     try:
         return delay_info['company'] == company and delay_info['name'] == line

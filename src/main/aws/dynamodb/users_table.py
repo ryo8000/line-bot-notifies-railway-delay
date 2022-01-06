@@ -22,7 +22,7 @@ def put_user(user_id: str) -> dict:
         e: ユーザ情報の登録に失敗
 
     Returns:
-        dict: ユーザ情報の登録結果
+        ユーザ情報の登録結果
     """
     timestamp_now = Decimal(int(datetime.utcnow().timestamp()))
     user = User(user_id, timestamp_now, timestamp_now)
@@ -45,7 +45,7 @@ def update_user(user_id: str, messages: Messages) -> dict:
         e: ユーザ情報の更新に失敗
 
     Returns:
-        dict: ユーザ情報の更新結果
+        ユーザ情報の更新結果
     """
     key = {'user_id': user_id}
     expression = "set #messages=:messages, #updated_time=:updated_time"
@@ -75,10 +75,10 @@ def update_railway(messages: Messages) -> dict:
     """鉄道用ユーザ情報を更新する
 
     Args:
-        messages:  鉄道遅延情報メッセージ群
+        messages: 鉄道遅延情報メッセージ群
 
     Returns:
-        dict: 鉄道用ユーザ情報の更新結果
+        鉄道用ユーザ情報の更新結果
     """
     return update_user("railway", messages)
 
@@ -93,7 +93,7 @@ def delete_user(user_id: str) -> dict:
         e: ユーザ情報の削除に失敗
 
     Returns:
-        dict: ユーザ情報の削除結果
+        ユーザ情報の削除結果
     """
     key = {'user_id': user_id}
     try:
@@ -113,7 +113,7 @@ def get_user(user_id: str) -> Optional[User]:
         e: ユーザ情報の取得に失敗
 
     Returns:
-        Optional[User]: ユーザ情報
+        ユーザ情報
     """
     key = {'user_id': user_id}
     try:
@@ -131,7 +131,7 @@ def get_railway() -> Railway:
         DynamoDBError: 鉄道用ユーザ情報が登録されていない
 
     Returns:
-        Railway: 鉄道用ユーザ情報
+        鉄道用ユーザ情報
     """
     key = {'user_id': 'railway'}
     try:
@@ -151,7 +151,7 @@ def scan_exclude_railway() -> List[User]:
         e: ユーザ情報の取得に失敗
 
     Returns:
-        List[User]: 鉄道用ユーザを除く全ユーザ情報リスト
+        鉄道用ユーザを除く全ユーザ情報リスト
     """
     scan_kwargs = {
         'FilterExpression': 'user_id  <> :user_id',

@@ -189,7 +189,7 @@ def create_reply_text(text: str) -> str:
         text: テキスト
 
     Returns:
-        str: 応答テキスト
+        応答テキスト
     """
     if ("jr" in text) or ("Jr" in text) or ("JR" in text) or ("西" in text):
         reply_text = get_railway_delay_info(users.WEST_JR)
@@ -224,7 +224,7 @@ def get_railway_delay_info(company_type: int) -> str:
         company_type: 運営会社種類
 
     Returns:
-        str: 鉄道遅延情報
+        鉄道遅延情報
     """
     railway_user = users_table.get_railway()
     timestamp_now = int(datetime.utcnow().timestamp())
@@ -245,7 +245,7 @@ def create_random_stamp_ids(rnd: int) -> tuple:
         rnd: 乱数
 
     Returns:
-        tuple: スタンプセットのパッケージIDとスタンプID
+        スタンプセットのパッケージIDとスタンプID
     """
     package_id = 11537
     sticker_id = 52002749

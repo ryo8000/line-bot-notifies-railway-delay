@@ -40,7 +40,7 @@ def validate_railway_delay_info(latest_railway_delay_info_message: str,
         db_railway_delay_info_message: DBに登録されている鉄道遅延情報
 
     Returns:
-        bool: 通知対象の鉄道遅延情報の場合はTrue
+        通知対象の鉄道遅延情報の場合はTrue
     """
     if "遅延情報はありません。" in latest_railway_delay_info_message:
         logger.info("通知対象の遅延情報はありません。")
