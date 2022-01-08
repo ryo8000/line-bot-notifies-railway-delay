@@ -5,6 +5,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
+from botocore.exceptions import ClientError
+
 from aws.dynamodb import utils
 from aws.dynamodb.users import Messages, User, Railway
 from aws.exceptions import DynamoDBError
@@ -29,7 +31,7 @@ def put_user(user_id: str) -> dict:
     try:
         response = users_table.put_item(
             Item=utils.replace_data(user.to_dict()))
-    except Exception as e:
+    except ClientError as e:
         raise e
     return response
 
@@ -66,7 +68,7 @@ def update_user(user_id: str, messages: Messages) -> dict:
             ExpressionAttributeValues=utils.replace_data(expression_value),
             ReturnValues=return_value
         )
-    except Exception as e:
+    except ClientError as e:
         raise e
     return response
 
@@ -98,7 +100,7 @@ def delete_user(user_id: str) -> dict:
     key = {'user_id': user_id}
     try:
         response = users_table.delete_item(Key=key)
-    except Exception as e:
+    except ClientError as e:
         raise e
     return response
 
@@ -118,7 +120,7 @@ def get_user(user_id: str) -> Optional[User]:
     key = {'user_id': user_id}
     try:
         response = users_table.get_item(Key=key)
-    except Exception as e:
+    except ClientError as e:
         raise e
     item = response.get('Item')
     return User.from_dict(item) if item else None
@@ -136,7 +138,7 @@ def get_railway() -> Railway:
     key = {'user_id': 'railway'}
     try:
         response = users_table.get_item(Key=key)
-    except Exception as e:
+    except ClientError as e:
         raise e
     item = response.get('Item')
     if not item:
@@ -159,6 +161,6 @@ def scan_exclude_railway() -> List[User]:
     }
     try:
         response = users_table.scan(**scan_kwargs)
-    except Exception as e:
+    except ClientError as e:
         raise e
     return [User.from_dict(item) for item in response["Items"]]
