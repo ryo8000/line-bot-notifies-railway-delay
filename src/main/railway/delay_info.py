@@ -6,7 +6,7 @@ import requests
 from loguru import logger
 
 from aws.dynamodb import users_table
-from aws.dynamodb.users import Messages
+from aws.dynamodb.delay_info import Messages
 
 # 定数群
 DELAY_URL = "https://tetsudo.rti-giken.jp/free/delay.json"

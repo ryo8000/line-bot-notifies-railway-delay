@@ -13,7 +13,7 @@ from linebot.models import (AudioMessage, FollowEvent, ImageMessage,
 from loguru import logger
 
 import railway
-from aws.dynamodb import users, users_table
+from aws.dynamodb import delay_info, users_table
 from functions import texts
 from line import line_bot_api
 
@@ -192,14 +192,14 @@ def create_reply_text(text: str) -> str:
         応答テキスト
     """
     if ("jr" in text) or ("Jr" in text) or ("JR" in text) or ("西" in text):
-        reply_text = get_railway_delay_info(users.WEST_JR)
+        reply_text = get_railway_delay_info(delay_info.WEST_JR)
     elif ("阪急" in text) or ("はんきゅう" in text):
-        reply_text = get_railway_delay_info(users.HANKYU)
+        reply_text = get_railway_delay_info(delay_info.HANKYU)
     elif ("阪神" in text) or ("はんしん" in text):
-        reply_text = get_railway_delay_info(users.HANSHIN)
+        reply_text = get_railway_delay_info(delay_info.HANSHIN)
     elif ("全" in text) or ("教" in text) or ("確認" in text) or (
             "遅延" in text) or ("現状" in text):
-        reply_text = get_railway_delay_info(users.ALL)
+        reply_text = get_railway_delay_info(delay_info.ALL)
     elif ("使い方" in text):
         reply_text = texts.HOW_TO_USE
     elif ("せん" in text) or ("ばか" in text) or ("あほ" in text) or (
@@ -226,11 +226,11 @@ def get_railway_delay_info(company_type: int) -> str:
     Returns:
         鉄道遅延情報
     """
-    delay_info = users_table.get_delay_info()
+    db_delay_info = users_table.get_delay_info()
     timestamp_now = int(datetime.utcnow().timestamp())
     # 過度なリクエストを避けるため、一定時間内であればDBに登録されている鉄道遅延情報を代用する
-    if (delay_info.updated_time + TEN_MINUTES) > timestamp_now:
-        delay_info_message = delay_info.messages.extract_message(
+    if (db_delay_info.updated_time + TEN_MINUTES) > timestamp_now:
+        delay_info_message = db_delay_info.messages.extract_message(
             company_type)
         logger.info("DBに登録されている鉄道遅延情報を使用: {}", delay_info_message)
     else:

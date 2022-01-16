@@ -8,7 +8,8 @@ from typing import List, Optional
 from botocore.exceptions import ClientError
 
 from aws.dynamodb import utils
-from aws.dynamodb.users import DelayInfo, Messages, User
+from aws.dynamodb.delay_info import DelayInfo, Messages
+from aws.dynamodb.users import User
 from aws.exceptions import DynamoDBError
 
 users_table = utils.db.Table(os.environ['AWS_USERS_TABLE'])

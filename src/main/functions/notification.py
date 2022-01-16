@@ -3,7 +3,7 @@
 from loguru import logger
 
 import railway
-from aws.dynamodb import users, users_table
+from aws.dynamodb import delay_info, users_table
 from line import line_bot_api
 
 
@@ -15,11 +15,11 @@ def main(event: dict, context: object) -> None:
         context: コンテキスト
     """
     try:
-        delay_info = users_table.get_delay_info()
-        db_railway_delay_info_message = delay_info.messages.all
+        db_delay_info = users_table.get_delay_info()
+        db_railway_delay_info_message = db_delay_info.messages.all
 
         latest_railway_delay_info_message = railway.request_delay_info_message(
-            users.ALL)
+            delay_info.ALL)
 
         if not validate_railway_delay_info(latest_railway_delay_info_message,
                                            db_railway_delay_info_message):
