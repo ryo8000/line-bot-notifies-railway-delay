@@ -8,7 +8,7 @@
       "VARIANT": "3.8",
       // Options
       "INSTALL_NODE": "true",
-      "NODE_VERSION": "lts/*",
+      "NODE_VERSION": "14",
     }
   },
   // コンテナの環境変数
