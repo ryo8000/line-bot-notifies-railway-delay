@@ -8,7 +8,7 @@ from typing import List, Optional
 from botocore.exceptions import ClientError
 
 from aws.dynamodb import utils
-from aws.dynamodb.users import Messages, User, Railway
+from aws.dynamodb.users import DelayInfo, Messages, User
 from aws.exceptions import DynamoDBError
 
 users_table = utils.db.Table(os.environ['AWS_USERS_TABLE'])
@@ -73,14 +73,14 @@ def update_user(user_id: str, messages: Messages) -> dict:
     return response
 
 
-def update_railway(messages: Messages) -> dict:
-    """鉄道用ユーザ情報を更新する
+def update_delay_info(messages: Messages) -> dict:
+    """鉄道遅延情報を更新する
 
     Args:
         messages: 鉄道遅延情報メッセージ群
 
     Returns:
-        鉄道用ユーザ情報の更新結果
+        鉄道遅延情報の更新結果
     """
     return update_user("railway", messages)
 
@@ -126,14 +126,14 @@ def get_user(user_id: str) -> Optional[User]:
     return User.from_dict(item) if item else None
 
 
-def get_railway() -> Railway:
-    """鉄道用ユーザ情報を取得する
+def get_delay_info() -> DelayInfo:
+    """鉄道遅延情報を取得する
 
     Raises:
-        DynamoDBError: 鉄道用ユーザ情報が登録されていない
+        DynamoDBError: 鉄道遅延情報が登録されていない
 
     Returns:
-        鉄道用ユーザ情報
+        鉄道遅延情報
     """
     key = {'user_id': 'railway'}
     try:
@@ -142,18 +142,18 @@ def get_railway() -> Railway:
         raise e
     item = response.get('Item')
     if not item:
-        raise DynamoDBError("鉄道用ユーザ情報が登録されていません。")
-    return Railway.from_dict(item)
+        raise DynamoDBError("鉄道遅延情報が登録されていません。")
+    return DelayInfo.from_dict(item)
 
 
-def scan_exclude_railway() -> List[User]:
-    """鉄道用ユーザを除く全ユーザ情報を取得する
+def scan_exclude_delay_info() -> List[User]:
+    """鉄道遅延情報を除く全ユーザ情報を取得する
 
     Raises:
         e: ユーザ情報の取得に失敗
 
     Returns:
-        鉄道用ユーザを除く全ユーザ情報リスト
+        鉄道遅延情報を除く全ユーザ情報リスト
     """
     scan_kwargs = {
         'FilterExpression': 'user_id  <> :user_id',

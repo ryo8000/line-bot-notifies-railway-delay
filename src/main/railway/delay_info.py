@@ -37,7 +37,7 @@ def request_delay_info_message(company_type: int) -> str:
     logger.info("鉄道遅延情報メッセージの取得に成功しました。 鉄道遅延情報メッセージ: {}", messages)
 
     try:
-        users_table.update_railway(messages)
+        users_table.update_delay_info(messages)
     except Exception as e:
         logger.error("鉄道遅延情報メッセージの登録に失敗しました。")
         raise e

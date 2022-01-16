@@ -15,8 +15,8 @@ def main(event: dict, context: object) -> None:
         context: コンテキスト
     """
     try:
-        railway_user = users_table.get_railway()
-        db_railway_delay_info_message = railway_user.messages.all
+        delay_info = users_table.get_delay_info()
+        db_railway_delay_info_message = delay_info.messages.all
 
         latest_railway_delay_info_message = railway.request_delay_info_message(
             users.ALL)
@@ -62,7 +62,7 @@ def notify_all_users_of_railway_delay_info(
         e: ユーザ情報の取得に失敗
     """
     try:
-        users = users_table.scan_exclude_railway()
+        users = users_table.scan_exclude_delay_info()
     except Exception as e:
         logger.error("ユーザ情報の取得に失敗しました。")
         raise e

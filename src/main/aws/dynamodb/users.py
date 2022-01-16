@@ -85,25 +85,25 @@ class User(Base):
 
 
 @dataclass
-class Railway(Base):
-    """鉄道用ユーザクラス"""
+class DelayInfo(Base):
+    """鉄道遅延情報クラス"""
 
     user_id: str
     updated_time: Decimal
     messages: Messages
 
     @classmethod
-    def from_dict(cls, railway: dict):
-        """dict型のデータからRailwayインスタンスを生成する
+    def from_dict(cls, delay_info: dict):
+        """dict型のデータからDelayInfoインスタンスを生成する
 
         Args:
-            railway: dict型データ
+            delay_info: dict型データ
 
         Returns:
-            Railwayインスタンス
+            DelayInfoインスタンス
         """
-        messages = railway.get("messages")
+        messages = delay_info.get("messages")
         type_messages = Messages.from_dict(messages) if messages else None
-        return cls(railway["user_id"],
-                   railway["updated_time"],
+        return cls(delay_info["user_id"],
+                   delay_info["updated_time"],
                    type_messages)
