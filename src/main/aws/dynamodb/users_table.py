@@ -27,7 +27,7 @@ def put_user(user_id: str) -> dict:
     Returns:
         ユーザ情報の登録結果
     """
-    timestamp_now = Decimal(int(datetime.utcnow().timestamp()))
+    timestamp_now = Decimal(datetime.utcnow().timestamp())
     user = User(user_id, timestamp_now, timestamp_now)
     try:
         response = users_table.put_item(
@@ -58,7 +58,7 @@ def update_user(user_id: str, messages: Messages) -> dict:
     }
     expression_value = {
         ':messages': messages.to_dict(),
-        ':updated_time': int(datetime.utcnow().timestamp()),
+        ':updated_time': Decimal(datetime.utcnow().timestamp()),
     }
     return_value = "UPDATED_NEW"
     try:

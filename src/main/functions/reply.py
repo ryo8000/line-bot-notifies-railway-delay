@@ -4,6 +4,7 @@ import json
 import os
 import random
 from datetime import datetime
+from decimal import Decimal
 
 from linebot import WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -227,7 +228,7 @@ def get_railway_delay_info(company_type: int) -> str:
         鉄道遅延情報
     """
     db_delay_info = users_table.get_delay_info()
-    timestamp_now = int(datetime.utcnow().timestamp())
+    timestamp_now = Decimal(datetime.utcnow().timestamp())
     # 過度なリクエストを避けるため、一定時間内であればDBに登録されている鉄道遅延情報を代用する
     if (db_delay_info.updated_time + TEN_MINUTES) > timestamp_now:
         delay_info_message = db_delay_info.messages.extract_message(
