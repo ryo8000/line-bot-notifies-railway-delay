@@ -15,7 +15,7 @@ from aws.exceptions import DynamoDBError
 users_table = utils.db.Table(os.environ['AWS_USERS_TABLE'])
 
 
-def put_user(user_id: str) -> dict:
+def put_user(user_id: str) -> User:
     """ユーザ情報を登録する
 
     Args:
@@ -25,16 +25,21 @@ def put_user(user_id: str) -> dict:
         e: ユーザ情報の登録に失敗
 
     Returns:
-        ユーザ情報の登録結果
+        登録したユーザ情報
     """
     timestamp_now = Decimal(datetime.utcnow().timestamp())
-    user = User(user_id, timestamp_now, timestamp_now)
+    user = User(
+        user_id=user_id,
+        created_time=timestamp_now,
+        updated_time=timestamp_now
+    )
     try:
-        response = users_table.put_item(
-            Item=utils.replace_data(user.to_dict()))
+        users_table.put_item(
+            Item=utils.replace_data(user.to_dict())
+        )
     except ClientError as e:
         raise e
-    return response
+    return user
 
 
 def update_user(user_id: str, messages: Messages) -> dict:
