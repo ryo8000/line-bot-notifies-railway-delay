@@ -123,10 +123,10 @@ def _generate_delay_info_messages(delay_info_list: list) -> Messages:
             all_companies_delay_info_message += f"\n{HANSHIN_URL}"
 
     messages = Messages(
-        west_jr_delay_info_message,
-        hankyu_delay_info_message,
-        hanshin_delay_info_message,
-        all_companies_delay_info_message
+        west_jr=west_jr_delay_info_message,
+        hankyu=hankyu_delay_info_message,
+        hanshin=hanshin_delay_info_message,
+        all=all_companies_delay_info_message,
     )
     logger.info("鉄道遅延情報メッセージ群: {}", messages)
     return messages
