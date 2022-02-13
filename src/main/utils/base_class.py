@@ -1,10 +1,10 @@
-"""DynamoDB用エンティティ基底モジュール"""
+"""クラス用ユーティリティモジュール"""
 
 from pydantic import BaseModel
 
 
-class Base(BaseModel):
-    """エンティティ基底クラス"""
+class Json(BaseModel):
+    """JSON形式に変換可能な基底クラス"""
 
     def __str__(self):
         return self.to_json_string()

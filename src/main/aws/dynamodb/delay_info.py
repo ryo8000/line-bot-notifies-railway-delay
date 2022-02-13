@@ -2,8 +2,9 @@
 
 from decimal import Decimal
 
-from aws.dynamodb.base import Base
 from aws.exceptions import DynamoDBError
+
+from utils.base_class import Json
 
 ALL = 0
 WEST_JR = 1
@@ -11,7 +12,7 @@ HANKYU = 2
 HANSHIN = 3
 
 
-class Messages(Base):
+class Messages(Json):
     """鉄道遅延情報メッセージ群クラス"""
 
     west_jr: str
@@ -44,7 +45,7 @@ class Messages(Base):
         return extracted_message
 
 
-class DelayInfo(Base):
+class DelayInfo(Json):
     """鉄道遅延情報クラス"""
 
     user_id: str

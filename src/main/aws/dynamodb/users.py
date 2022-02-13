@@ -2,10 +2,10 @@
 
 from decimal import Decimal
 
-from aws.dynamodb.base import Base
+from utils.base_class import Json
 
 
-class User(Base):
+class User(Json):
     """ユーザクラス"""
 
     user_id: str
